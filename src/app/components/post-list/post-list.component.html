@@ -1,0 +1,6 @@
+<div class="wrapper">
+  <div class="row wrapper">
+    <h3 class="col s12">Posts to read</h3> 
+      <app-post-card class="post-card" *ngFor="let post of posts | completed: false" [post]="post" (deletePost)="deletePost($event)" (completePost)="completePost($event)"></app-post-card>
+  </div>
+</div>

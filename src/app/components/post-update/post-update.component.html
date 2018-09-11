@@ -1,0 +1,44 @@
+<div class="container">
+    <div class="row wrapper">
+        <h3 class="col s12">Edit post</h3> 
+        <form class="col s12" (ngSubmit)="updatePost()">
+            <div class="row">
+              <div class="input-field col s12">
+                <input id="title" type="text" [(ngModel)]="post.title" name="title" class="validate" required />
+                <label for="title" class="active">Title</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12">
+                <input id="link" type="url" [(ngModel)]="post.link" name="link" class="validate" placeholder="http://example.com" required />
+                <label for="link" class="active">Link</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12">
+                <textarea id="note" [(ngModel)]="post.note" name="note" class="materialize-textarea"></textarea>
+                <label for="note" class="active">Description</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12">
+                <input id="category" type="text" [(ngModel)]="post.category" name="category" />
+                <label for="category" class="active">Category</label>
+              </div>
+            </div>
+            <div class="input-field col s12">
+              <label>
+                <input type="checkbox" [(ngModel)]="post.completed" name="completed" />
+                <span>Complete</span>
+              </label>
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <button class="btn waves-effect waves-light right" type="submit">Update
+                      <i class="material-icons right">send</i>
+                    </button>
+                </div>
+            </div>
+        </form>
+      </div>
+  </div>

@@ -1,0 +1,29 @@
+.complete-button {
+    cursor: pointer;
+}
+
+.action-container {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+}
+
+.main-content {
+    height: 255px;
+}
+
+.post-note {
+    font-style: italic;
+}
+
+.action-button {
+    margin-left: 5px;
+    background-color: transparent;
+}
+
+.edit-btn:hover {
+    background-color: #7986cb !important;
+}
+.delete-btn:hover {
+    background-color: #F44336 !important;
+}
