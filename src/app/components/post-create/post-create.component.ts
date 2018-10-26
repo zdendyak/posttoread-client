@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { PostService } from '../../services/post.service';
 
 import { ToastrService } from 'ngx-toastr';
@@ -13,7 +13,7 @@ import { takeUntil } from 'rxjs/operators';
   templateUrl: './post-create.component.html',
   styleUrls: ['./post-create.component.css']
 })
-export class PostCreateComponent implements OnInit {
+export class PostCreateComponent implements OnDestroy {
 
   post: Post = {
     title: "",
@@ -26,13 +26,13 @@ export class PostCreateComponent implements OnInit {
 
   constructor(private postService: PostService, private toastr: ToastrService) { }
 
-  ngOnInit() {
-  }
-
   savePost() {
+    if (!this.post.title.trim() || !this.post.link.trim()) return;
+
     this.postService.createPost(this.post)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((result: any) => {
+        console.log('create post result', result);
         if (result.ok) {
           this.clearPostData();
           this.toastr.success('New post was successfully created');
@@ -41,7 +41,7 @@ export class PostCreateComponent implements OnInit {
         }
       }, (error) => {
         this.toastr.error('Error occurred during saving a new post');
-        console.error(error);
+        console.error('Error occurred', error);
       });
   }
 

@@ -16,6 +16,11 @@
     font-style: italic;
 }
 
+.post-title {
+    overflow: hidden;
+    max-height: 96px;
+}
+
 .action-button {
     margin-left: 5px;
     background-color: transparent;

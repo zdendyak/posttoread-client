@@ -4,32 +4,32 @@
       <form class="col s12" (ngSubmit)="savePost()">
           <div class="row">
             <div class="input-field col s12">
-              <input id="title" type="text" [(ngModel)]="post.title" name="title" class="validate" required />
+              <input id="title" type="text" [(ngModel)]="post.title" name="title" #title class="validate" required />
               <label for="title">Title</label>
             </div>
           </div>
           <div class="row">
             <div class="input-field col s12">
-              <input id="link" type="url" [(ngModel)]="post.link" name="link" class="validate" placeholder="http://example.com" required />
+              <input id="link" type="url" [(ngModel)]="post.link" name="link" #link class="validate" placeholder="http://example.com" required />
               <label for="link">Link</label>
             </div>
           </div>
           <div class="row">
             <div class="input-field col s12">
-              <textarea id="note"[(ngModel)]="post.note" name="note" class="materialize-textarea"></textarea>
+              <textarea id="note"[(ngModel)]="post.note" name="note" #note class="materialize-textarea"></textarea>
               <label for="note">Description</label>
             </div>
           </div>
           <div class="row">
             <div class="input-field col s12">
-              <input id="category" type="text" [(ngModel)]="post.category" name="category" />
+              <input id="category" type="text" [(ngModel)]="post.category" name="category" #category />
               <label for="category">Category</label>
             </div>
           </div>
   
           <div class="row">
               <div class="input-field col s12">
-                  <button class="btn waves-effect waves-light right" type="submit">Submit
+                  <button class="btn waves-effect waves-light right" type="submit" [disabled]="!post.title || !post.link">Submit
                     <i class="material-icons right">send</i>
                   </button>
               </div>

@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Location } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PostService } from '../../services/post.service';
 import { ToastrService } from 'ngx-toastr';
 import { Post } from '../../post';
 
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-post-update',
@@ -26,15 +25,15 @@ export class PostUpdateComponent implements OnInit {
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
   constructor(private postService: PostService, private toastr: ToastrService,
-              private route: ActivatedRoute, private location: Location) { }
+              private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
-    this.getPost();
-    
+    this.route.paramMap
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(pmap => this.getPost(pmap.get('id')));
   }
 
-  getPost() {
-    const id = this.route.snapshot.paramMap.get('id');
+  getPost(id) {
     this.postService.getPostById(id)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(post => {
@@ -50,9 +49,9 @@ export class PostUpdateComponent implements OnInit {
     this.postService.updatePost(this.post)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((result: any) => {
-        console.log('result in update', result);
         if (result.ok) {
           this.toastr.success('Post was successfully updated');
+          this.post.completed ? this.router.navigate(['/completed']) : this.router.navigate(['/posts'])
         } else {
           this.toastr.error('Error occurred during updating post data');
         }

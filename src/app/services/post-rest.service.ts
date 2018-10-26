@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
 
-import { map } from  'rxjs/operators';
+import { map, catchError } from  'rxjs/operators';
 
 import { Post, PostResponse } from '../post';
 
@@ -28,20 +28,26 @@ export class PostRestService {
 
   getAllPosts(): Observable<Post[]> {
     return this.http.get(this.url)
-              .pipe(map((result: PostResponse) => result.posts));
+              .pipe(
+                map((result: PostResponse) => result.posts),
+                catchError(() => ([]))
+              );
   }
 
   getPostById(id: string): Observable<Post> {
     const postSubject = new Subject<Post>();
     this.http.get(this.url + id)
-      .subscribe((result: PostResponse) => postSubject.next(result.post));
+      .subscribe((result: PostResponse) => postSubject.next(result.post),
+                  error => postSubject.error(error));
 
     return postSubject;
   }
 
   createPost(post) : Subject<PostResponse> {
     const postSubject = new Subject<PostResponse>();
-    this.http.post(this.url, post)
+    let headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    this.http.post(this.url, post, { headers })
       .subscribe((result: PostResponse) => {
         if (result.ok) {
           const posts = this.posts$.getValue();
@@ -49,14 +55,16 @@ export class PostRestService {
           this.posts$.next(posts);
         };
         postSubject.next(result)
-      });
+      }, error => postSubject.error(error));
     return postSubject;
   }
 
   updatePost(post) : Subject<PostResponse> {
     const postSubject = new Subject<PostResponse>();
+    let headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
     const id = post._id || post.id;
-    this.http.put(this.url + id, post)
+    this.http.put(this.url + id, post, { headers })
       .subscribe((result: any) => {
         if (result.ok) {
           const posts = this.posts$.getValue();
@@ -65,13 +73,15 @@ export class PostRestService {
           this.posts$.next(posts);
         };
         postSubject.next(result);
-      });
+      }, error => postSubject.error(error));
     return postSubject;
   }
 
   removePost(id) : Subject<any> {
     const postSubject = new Subject<any>();
-    this.http.delete(this.url + id)
+    let headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    this.http.delete(this.url + id, { headers })
       .subscribe((result: any) => {
         if (result.ok) {
           const posts = this.posts$.getValue();
@@ -82,13 +92,15 @@ export class PostRestService {
           } 
         }
         postSubject.next(result);
-      });
+      }, error => postSubject.error(error));
     return postSubject;
   }
 
   completePost(id, val): Subject<any> {
     const postSubject = new Subject<Post>();
-    this.http.put(this.url + id, { completed: val })
+    let headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    this.http.put(this.url + id, { completed: val }, { headers })
       .subscribe((result: any) => {
         if (result.ok) {
           const posts = this.posts$.getValue();

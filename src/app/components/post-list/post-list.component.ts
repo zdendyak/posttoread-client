@@ -18,7 +18,8 @@ export class PostListComponent implements OnInit {
 
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-  constructor(private postService: PostService, private toastr: ToastrService) { }
+  constructor(private postService: PostService, private toastr: ToastrService) {
+   }
 
   ngOnInit() {
     this.postService.getService().posts.subscribe(posts => { 
@@ -28,7 +29,6 @@ export class PostListComponent implements OnInit {
   }
   
   deletePost(id) {
-    console.log('try remove post with id ', id);
     this.postService.removePost(id)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((result: any) => {
