@@ -94,4 +94,62 @@ describe('PostListComponent', () => {
       expect(component.posts).toEqual(postResponse.posts);
     });
   });
+
+
+  it('should have empty array of posts after Angular calls ngOnInit', async() => {
+    
+    const postResponse:  PostResponse = {
+      ok: true,
+      posts: null
+    };
+    
+    const service: PostRestService = TestBed.get(PostRestService);
+    let posts;
+    spyOn(postServiceStub, 'getService').and.returnValue(service);
+
+    spyOnProperty(service, 'posts', 'get').and.returnValue(asyncData([]));
+    service.posts.subscribe(res => {
+      posts = res;
+      expect(posts).toEqual([]);
+    });
+    
+    fixture.detectChanges();   // ngOnInit()
+
+    fixture.whenStable().then(() => { // wait for async $posts
+      fixture.detectChanges();       
+      expect(component.posts).toEqual([]);
+    });
+  });
+
+  it('should complete post', async() => {
+    
+    const post1: Post = {
+      _id: "1",
+      title: "title1",
+      link: "link1",
+      completed: false,
+      created: new Date().toDateString(),
+      note: "",
+      category: ""
+    };
+    const postResponse:  PostResponse = {
+      ok: true,
+      post: Object.assign(post1, {completed: true})
+    };
+    
+    // const service: PostRestService = TestBed.get(PostRestService);
+
+    spyOn(postServiceStub, 'completePost').and.returnValue(asyncData(postResponse));
+    const toastrService = jasmine.createSpyObj('ToastrService', ['success', 'error']);
+    const successToastrSpy = toastrService.success.and.returnValue(true);
+    const errorToastrSpy = toastrService.error.and.returnValue('error');
+    
+    fixture.detectChanges();   // ngOnInit()
+    component.completePost({id: post1._id, val: true});
+    fixture.whenStable().then(() => { // wait for async $posts
+      fixture.detectChanges();       
+      expect(successToastrSpy.calls.any()).toBe(true, 'success message have been shown');
+      expect(errorToastrSpy.calls.any()).toBe(false, 'error message have not been shown');
+    });
+  });
 });

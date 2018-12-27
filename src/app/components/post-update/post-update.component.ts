@@ -21,6 +21,13 @@ export class PostUpdateComponent implements OnInit {
     category: "",
     completed: false
   };
+  originalPost: Post = {
+    title: "",
+    link: "",
+    note: "",
+    category: "",
+    completed: false
+  };
 
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
@@ -38,6 +45,7 @@ export class PostUpdateComponent implements OnInit {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(post => {
                   this.post = post;
+                  this.originalPost = Object.assign({}, post);
                 },
                 error => {
                   this.toastr.error('Error occurred during fetching post data');
@@ -59,6 +67,13 @@ export class PostUpdateComponent implements OnInit {
         this.toastr.error('Error occurred during updating post data');
         console.error(error);
       });
+  }
+
+  isUpdated () {
+    for (let key of Object.keys(this.post)) {
+      if (this.post[key] !== this.originalPost[key]) return true;
+    }
+    return false;
   }
 
   ngOnDestroy() {
